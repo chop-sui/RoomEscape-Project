@@ -13,7 +13,7 @@ room2.setRoomLight(0.3)
 // 전등
 room.lamp = room.createObject("lamp", "전등-끔.png") 
 room.lamp.setWidth(80)
-room.locateObject(room.lamp, 1100, 65)
+room.locateObject(room.lamp, 990, 65)
 
 room.lamp.onClick = function()
 {
@@ -111,7 +111,7 @@ room.locateObject(room.tv, 1000, 230)
 
 room.tv.onClick = function()
 {
-    if (game.getHandItem() == room.cd) // cd를 사용할 경우에 동영상 실행
+    if (game.getHandItem() == room2.cd) // cd를 사용할 경우에 동영상 실행
     {
         playSound("tv_on.wav")
         showVideoPlayer("video.mp4")
@@ -133,7 +133,7 @@ room.pumpkin2 = room.createObject("pumpkin2", "호박2.png")
 room.pumpkin2.setWidth(120)
 room.locateObject(room.pumpkin2, 1180, 600)
 
-room.pumpkin2.onClick = function() // 의문:이게 다른 방에서 pick한 아이템을 들고 클릭하면 else문이 실행안됨
+room.pumpkin2.onClick = function()
 {
     if(roomtorch == false && game.getHandItem() == room.knife)
     {
@@ -150,7 +150,7 @@ room.pumpkin2.onClick = function() // 의문:이게 다른 방에서 pick한 아
     
 }
 
-// room에서 보이는 토치
+// 토치
 room.torch = room.createObject("torch", "토치.png") // 토치 생성
 room.torch.setWidth(70)
 room.locateObject(room.torch, 1080, 680)
@@ -160,7 +160,7 @@ roomtorch = false
 room.torch.onClick = function()
 {
     playSound("pick.wav")
-    sideview.torch.pick()
+    room.torch.pick()
     room.torch.hide()
     printMessage("호박 안에 있던 토치를 얻었다.")
 }
@@ -195,7 +195,7 @@ sideview.locateObject(sideview.board, 490, 300)
 
 sideview.board.onClick = function()
 {
-    if (roomLight == false && game.getHandItem() == sideview.torch) // 불이 꺼져있고 토치를 사용할 경우
+    if (roomLight == false && game.getHandItem() == room.torch) // 불이 꺼져있고 토치를 사용할 경우
     {
         playSound("click.wav")
         showImageViewer("칠판-줌인2.png")
@@ -241,6 +241,7 @@ sideview.door.onOpen = function()
 {
     sideview.door.setSprite("문1-열림.png")
     sideview.locateObject(sideview.door, 1053,280)
+    sideview.keypad.hide()
 }
 
 sideview.door.onClose = function()
@@ -249,16 +250,72 @@ sideview.door.onClose = function()
     sideview.locateObject(sideview.door, 1100,275)
 }
 
-// sideview에서 사용되는 토치
-sideview.torch = sideview.createObject("torch", "토치.png")
-sideview.torch.setWidth(70)
-sideview.locateObject(sideview.torch, 80, 680)
-sideview.torch.hide()
+// 상자
+sideview.box = sideview.createObject("box", "상자-닫힘.png")
+sideview.box.setWidth(120)
+sideview.locateObject(sideview.box, 760, 540)
+sideview.box.lock()
 
-// sideview에서 나타나는 드라이버
+
+sideview.box.onClick = function() 
+{
+    if(sideview.box.isClosed())
+    {
+        sideview.box.open()
+        sideview.driver.show()
+        sideview.boxkeypad.hide()
+    }
+    else if(sideview.box.isOpened())
+    {
+        playSound("click.wav")   
+    }
+    else if(sideview.door.isLocked())
+    {
+        playSound("click.wav")
+        printMessage("키패드가 붙어있다.")
+    }
+    else {}
+}
+
+sideview.box.onOpen = function()
+{
+    sideview.box.setSprite("상자-열림.png")
+}
+
+sideview.box.onClose = function()
+{
+    sideview.box.setSprite("상자-닫힘.png")
+}
+
+// 상자 키패드
+sideview.boxkeypad = sideview.createObject("boxkeypad", "박스키패드.png")
+sideview.boxkeypad.setWidth(35)
+sideview.locateObject(sideview.boxkeypad, 760, 527)
+
+sideview.boxkeypad.onClick = function()
+{
+    playSound("click.wav")
+    printMessage("...")
+    showKeypad("telephone", "******", function(){
+        playSound("door_unlock.wav")
+        sideview.box.unlock()
+        printMessage("철커덕")
+    })
+}
+
+// 드라이버
 sideview.driver = sideview.createObject("driver", "드라이버.png")
 sideview.driver.setWidth(70)
-sideview.locateObject(sideview.driver, 880, 680)
+sideview.locateObject(sideview.driver, 760, 540)
+sideview.driver.hide()
+
+sideview.driver.onClick = function()
+{
+    playSound("pick.wav")
+    sideview.driver.pick()
+    sideview.driver.hide()
+    printMessage("웬 드라이버지?")
+}
 
 // room2로 가는 키패드
 sideview.keypad = sideview.createObject("keypad", "숫자키.png")
@@ -269,7 +326,7 @@ sideview.keypad.onClick = function()
 {
     playSound("click.wav")
     printMessage("Chalk Board")
-    showKeypad("number", "0001", function(){
+    showKeypad("number", "1031", function(){
         playSound("door_unlock.wav")
         sideview.door.unlock()
         printMessage("잠금장치가 열렸다.")
@@ -311,18 +368,16 @@ room2.candle.onClick = function()
     }
 }
 
-// room2에서 사용되는 드라이버
-room2.driver = room2.createObject("driver", "드라이버.png")
-room2.driver.setWidth(70)
-room2.locateObject(room2.driver, 880, 680)
-room2.driver.hide()
+// 박스힌트 쪽지
+room2.boxhint = room2.createObject("boxhint", "박스힌트.png")
+room2.boxhint.setWidth(75)
+room2.locateObject(room2.boxhint, 400, 630)
 
-sideview.driver.onClick = function()
+room2.boxhint.onClick = function()
 {
     playSound("pick.wav")
-    room2.driver.pick()
-    sideview.driver.hide()
-    printMessage("웬 드라이버지?")
+    room2.boxhint.pick()
+    printMessage("포스트잇을 주웠다.")
 }
 
 // 벽에 걸린 그림
@@ -332,7 +387,7 @@ room2.locateObject(room2.picture, 167, 230)
 
 room2.picture.onClick = function()
 {
-    if (roompaper == false && game.getHandItem() == room2.driver)
+    if (roompaper == false && game.getHandItem() == sideview.driver)
     {
         playSound("click_working.wav")
         showImageViewer("그림1-해체.png")
@@ -392,23 +447,16 @@ room2.car.onDrag = function(direction)
     }
 }
 
-// room2에서 보이는 cd
+// cd
 room2.cd = room2.createObject("cd", "cd.png")
 room2.cd.setWidth(60)
 room2.locateObject(room2.cd, 1170, 640)
 room2.cd.hide()
 
-// room에서 사용되는 cd
-
-room.cd = room.createObject("cd", "cd.png")
-room.cd.setWidth(60)
-room.locateObject(room.cd, 1170, 640)
-room.cd.hide()
-
 room2.cd.onClick = function()
 {
     playSound("pick.wav")
-    room.cd.pick()
+    room2.cd.pick()
     room2.cd.hide()
     printMessage("정체불명의 CD를 주웠다.")
 }
