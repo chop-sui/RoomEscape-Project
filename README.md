@@ -11,24 +11,6 @@
 
 ↓------------------------------TIP------------------------------↓  
 &nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-&nbsp;
-
 모든 방에서 클릭을 해서 도구를 찾고 적절히 잘 사용해야합니다.
 
 
